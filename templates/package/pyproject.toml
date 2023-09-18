@@ -1,0 +1,67 @@
+[project]
+name = "mylibrary"
+description = ""
+dependencies = []
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+dynamic = ["version"]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+version = { source = "file", path = "src/mylibrary/_version.py" }
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///${PROJECT_ROOT}/../../tools/via-monotools#egg=via-monotools",
+    "mypy~=1.3",
+    "black~=23.3",
+    "isort~=5.12",
+    "pylint~=2.17",
+    "ruff~=0.0",
+    "pytest~=7.4",
+]
+
+[tool.pdm.scripts]
+format = {composite = [
+    "ruff src --fix --exit-zero",
+    "m_black src/ tests/",
+]}
+
+post_lock = "make"
+
+lint = {composite = [
+    "m_black --check src/ tests/",
+    "ruff check src/",
+    "m_mypy src/",
+    "m_pylint src/",
+]}
+
+tests = {composite = [
+    "m_mypy tests/ src/",
+    "pytest tests/"
+]}
+
+"tests:junit" = {composite = [
+    "m_mypy tests/ src/ --junit-xml {args}",
+    "pytest tests/ --junit-xml=pytest-{args}",
+]}
+
+checks = {composite=[
+    "m_black --check src/ tests/",
+    "ruff check src/",
+    "m_pylint src/",
+    "m_mypy tests/ src/",
+    "pytest tests/"
+]}
+
+"checks:junit" = {composite = [
+    "m_black --check src/ tests/",  # Doesn't have a JUnit export option.
+    "ruff check src/ --format junit --output-file ruff-{args}",
+    "m_pylint src/",  # Doesn't have a JUnit export option.
+    "m_mypy tests/ src/ --junit-xml mypy-{args}",
+    "pytest tests/ --junit-xml=pytest-{args}",
+]}

@@ -1,0 +1,5 @@
+[console_scripts]
+m_black = via_monotools.linting:cli_black
+m_mypy = via_monotools.linting:cli_mypy
+m_pylint = via_monotools.linting:cli_pylint
+monotools = via_monotools.main:cli

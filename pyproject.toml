@@ -1,0 +1,105 @@
+
+[project]
+name = ""
+version = ""
+description = ""
+dependencies = []
+requires-python = ">=3.10"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///${PROJECT_ROOT}/tools/via-monotools#egg=via-monotools",
+    "pre-commit>=3.3.3",
+    "black>=23.3.0",
+    "ruff>=0.0.277",
+    "pylint>=2.17.4",
+    "mypy>=1.4.1",
+]
+
+[tool.pdm.scripts]
+install-pre-commit = "pre-commit install"
+uninstall-pre-commit = "pre-commit uninstall"
+post_lock = "make"
+
+[tool.via-root]
+[tool.via-root.project-scripts]
+format = {composite = [
+    "m_black src/",
+]}
+
+lint = {composite = [
+    "m_black --check src/",
+    "m_pylint src/",
+    "m_mypy src/",
+]}
+
+[tool.black]
+line-length = 120
+
+[tool.pylint]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "wrong-import-order",
+
+    "too-few-public-methods",
+    "too-many-arguments",
+    "fixme",
+    "unused-import",
+
+    # Those specifically can specically cause security issues, so maybe best left untouched?
+    "c-extension-no-member",
+]
+max-line-length = 120
+
+[tool.pylint.main]
+good-names-rgxs = ["_T.*"]
+
+[tool.mypy]
+explicit_package_bases = false
+disallow_untyped_defs = true
+
+install_types = true
+non_interactive = true
+
+[[tool.mypy.overrides]]
+module = "benedict.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "mockitup.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pandas.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "numpy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ruamel.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pg_ast.*"
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 120
+
+select = [
+    "E", "F", "UP", "D", "D101", "D102", "D103", "D418",
+    "D213", "I", "S", "PIE", "SIM", "G", "RUF"
+]
+
+ignore = ["D10", "D212"]
+
+exclude = [
+    "**/test_*.py"
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"

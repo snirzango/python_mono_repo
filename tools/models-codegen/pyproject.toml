@@ -1,0 +1,38 @@
+
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Shacham Ginat",email = "shacham.ginat@pagaya.com"},
+]
+dependencies = [
+    "datamodel-code-generator>=0.20.0",
+    "python-benedict[yaml]>=0.30.2",
+    "httpx~=0.24",
+    "click~=8.1",
+]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e file:///${PROJECT_ROOT}/../via-monotools#egg=via-monotools",
+    "pylint>=2.17.4",
+    "black>=23.3.0",
+    "mypy>=1.3.0",
+    "ruff>=0.0.277",
+]
+
+[tool.pdm.scripts]
+format = {composite = [
+    "ruff check --fix --exit-zero model_generation.py",
+    "m_black model_generation.py",
+]}
+lint = {composite = [
+    "ruff check model_generation.py",
+    "m_black --check model_generation.py",
+    "m_pylint model_generation.py",
+    "m_mypy model_generation.py",
+]}
+post_lock = "make"
